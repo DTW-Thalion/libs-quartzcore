@@ -41,6 +41,8 @@
     return nil;
 
   _programID = glCreateProgram();
+  /* AR-Q5: check for GL resource creation failure */
+  if (_programID == 0) NSLog(@"CAGLProgram: GL program creation failed");
 
   return self;
 }

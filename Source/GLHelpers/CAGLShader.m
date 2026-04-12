@@ -43,6 +43,8 @@
     return nil;
 
   _shaderID = glCreateShader([self shaderType]);
+  /* AR-Q5: check for GL resource creation failure */
+  if (_shaderID == 0) NSLog(@"CAGLShader: GL shader creation failed");
 
   return self;
 }

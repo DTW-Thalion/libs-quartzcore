@@ -65,6 +65,8 @@
     return nil;
 
   glGenTextures(1, &_textureID);
+  /* AR-Q5: check for GL resource creation failure */
+  if (_textureID == 0) NSLog(@"CAGLTexture: GL texture creation failed");
 
   return self;
 }

@@ -32,7 +32,8 @@
 @property (nonatomic, assign) GLuint framebufferID;
 @end
 
-static NSMutableArray * framebufferStack = nil;
+/* TS-Q5: made thread-local so each GL thread has its own FBO stack */
+static _Thread_local NSMutableArray * framebufferStack = nil;
 
 @implementation CAGLSimpleFramebuffer
 @synthesize texture=_texture;
@@ -47,6 +48,8 @@ static NSMutableArray * framebufferStack = nil;
     return nil;
 
   glGenFramebuffers(1, &_framebufferID);
+  /* AR-Q5: check for GL resource creation failure */
+  if (_framebufferID == 0) NSLog(@"CAGLSimpleFramebuffer: GL framebuffer creation failed");
 
   /* Build a texture and assign it to the framebuffer */
   _texture = [CAGLTexture new];

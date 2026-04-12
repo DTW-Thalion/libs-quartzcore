@@ -188,6 +188,9 @@ NSString *const kCAGravityBottomRight = @"CAGravityBottomRight";
   return [[self new] autorelease];
 }
 
+/* TODO PF-Q5: This chain of if/isEqualToString: comparisons is O(n) per
+   lookup.  Consider replacing with a static NSDictionary lookup table
+   initialized once in +initialize for O(1) access. */
 + (id) defaultValueForKey: (NSString *)key
 {
   if ([key isEqualToString:@"delegate"])

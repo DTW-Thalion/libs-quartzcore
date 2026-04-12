@@ -240,6 +240,8 @@ static NSLock *transactionLock = nil; /* TS-Q1: protects transactionStack access
                keyPath: (NSString *)keyPath
 {
   /* eliminate any earlier actions with same object and keypath */
+  /* TODO PF-Q2: This linear predicate scan is O(n) per registration.
+     Consider using a dictionary keyed by (object, keyPath) for O(1) dedup. */
   NSPredicate * sameActionsPredicate = [NSPredicate predicateWithFormat: @"object = %@ and keyPath = %@", object, keyPath];
   NSArray * duplicates = [_actions filteredArrayUsingPredicate: sameActionsPredicate];
   [_actions removeObjectsInArray: duplicates];

@@ -324,6 +324,8 @@
 
   /* Destroy and then recreate the presentation layer.
      This is the easiest way to reset it to default values. */
+  /* TODO PF-Q1: Recreating the presentation layer every frame is expensive.
+     Consider caching and incrementally updating it instead of full discard/recreate. */
   [layer discardPresentationLayer];
   CALayer * presentationLayer = [layer presentationLayer];
 
@@ -417,7 +419,8 @@
           [_blurHorizProgram bindUniformAtLocation: loc
                                      toUnsignedInt: 0];
 
-          // TODO: replace use of glBegin()/glEnd()
+          /* TODO PF-Q3: replace use of glBegin()/glEnd() with vertex buffer
+             objects (VBOs) for better performance on modern GL drivers. */
           [texture bind];
 
           GLfloat textureMaxX = 1.0, textureMaxY = 1.0;
@@ -750,6 +753,9 @@
         {
           CGImageRef image = (CGImageRef)layerContents;
 
+          /* TODO PF-Q4: This re-uploads the texture from the CGImage every
+             frame.  Cache the GL texture on the layer (e.g. in backingStore)
+             and only re-upload when contents actually change. */
           texture = [CAGLTexture texture];
           [texture loadImage: image];
         }
@@ -827,8 +833,13 @@
   /* Empty the cache so redraw gets performed in -[CARenderer _renderLayer:withTransform:] */
   [[layer backingStore] setOffscreenRenderTexture: nil];
 
-  // TODO: 512x512 is NOT correct, we need to determine the actual layer size together with sublayers
-  const GLuint rasterize_w = 512, rasterize_h = 512;
+  /* AR-Q7: 512x512 is NOT correct — we need to determine the actual layer
+     size together with sublayers.  Using the layer's bounds as a better
+     approximation; falls back to 512 if bounds are degenerate. */
+  GLuint rasterize_w = (GLuint)CGRectGetWidth([layer bounds]);
+  GLuint rasterize_h = (GLuint)CGRectGetHeight([layer bounds]);
+  if (rasterize_w == 0) rasterize_w = 512;
+  if (rasterize_h == 0) rasterize_h = 512;
   CAGLSimpleFramebuffer * framebuffer = [[CAGLSimpleFramebuffer alloc] initWithWidth: rasterize_w height: rasterize_h];
   [framebuffer setDepthBufferEnabled: YES];
   [framebuffer bind];
