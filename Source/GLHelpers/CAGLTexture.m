@@ -209,6 +209,7 @@
       #if !(GNUSTEP)
       /* let's undo premultiplication */
       /* TODO: do we need to undo premultiplication under GNUstep too? */
+      if (data[i+3] == 0) continue; /* fully transparent — skip unpremultiply (AR-Q4: avoid div-by-zero) */
       for(int j=0; j<3; j++)
         {
           data[i+j] = data[i+j] / (data[i+3]/255.);
@@ -254,7 +255,9 @@
 
 - (void) _writeToPNG:(NSString*)path
 {
-  char pixels[[self width]*[self height]*4];
+  /* AR-Q6: replaced VLA with heap allocation to avoid stack overflow on large textures */
+  char *pixels = malloc([self width] * [self height] * 4);
+  if (!pixels) return;
   [self bind];
   glGetTexImage([self textureTarget], 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
@@ -271,5 +274,6 @@
   CGImageRelease(image);
 
   [data writeToFile:path atomically:YES];
+  free(pixels);
 }
 @end

@@ -69,6 +69,13 @@
                        options: options;
 @end
 
+/* TS-Q3: Thread safety — the CARenderer's GL context (_GLContext) must only be
+   used from a single thread at a time.  All rendering methods (-render,
+   -beginFrameAtTime:timeStamp:, -endFrame, and internal helpers) assume they
+   are called from the same thread that created/owns the context.  Callers are
+   responsible for ensuring this; no internal locking is provided because GL
+   contexts are inherently single-threaded. */
+
 @implementation CARenderer
 @synthesize layer=_layer;
 @synthesize bounds=_bounds;
@@ -326,11 +333,14 @@
   _nextFrameTime = MAX(_nextFrameTime, theTime);
 
   /* Tell all children to update themselves. */
-  for (CALayer * sublayer in [layer sublayers])
+  /* TS-Q2: snapshot sublayers to avoid mutation during iteration */
+  NSArray *sublayersSnapshot = [[layer sublayers] copy];
+  for (CALayer * sublayer in sublayersSnapshot)
     {
       [self _updateLayer: sublayer
                   atTime: theTime];
     }
+  [sublayersSnapshot release];
 
   /* Now that children have had a chance to determine
      whether they need to be rendered offscreen, the layer itself
@@ -764,10 +774,13 @@
 
   transform = CATransform3DConcat ([layer sublayerTransform], transform);
   transform = CATransform3DTranslate (transform, -[layer bounds].size.width/2, -[layer bounds].size.height/2, 0);
-  for (CALayer * sublayer in [layer sublayers])
+  /* TS-Q2: snapshot sublayers to avoid mutation during iteration */
+  NSArray *renderSublayersSnapshot = [[layer sublayers] copy];
+  for (CALayer * sublayer in renderSublayersSnapshot)
     {
       [self _renderLayer: sublayer withTransform: transform];
     }
+  [renderSublayersSnapshot release];
 }
 
 - (void) _determineAndScheduleRasterizationForLayer: (CALayer*)layer

@@ -45,7 +45,8 @@
 #endif
 #import <stdlib.h>
 
-static CFTimeInterval currentFrameBeginTime = 0;
+/* TS-Q4: made thread-local so each renderer thread has its own frame time */
+static _Thread_local CFTimeInterval currentFrameBeginTime = 0;
 
 NSString *const kCAGravityResize = @"CAGravityResize";
 NSString *const kCAGravityResizeAspect = @"CAGravityResizeAspect";
@@ -677,6 +678,13 @@ GSCA_OBSERVABLE_SETTER(setShadowOffset, CGSize, shadowOffset, CGSizeEqualToSize)
 
 - (BOOL) isPresentationLayer
 {
+  /* AR-Q3: This looks inverted but is correct.  A model layer has
+     _presentationLayer set (it owns a presentation copy), so
+     !_presentationLayer == NO — it is NOT a presentation layer.
+     A presentation layer copy never creates its own _presentationLayer,
+     so !_presentationLayer == YES — it IS a presentation layer.
+     The _modelLayer ivar is an alternative indicator, but this logic
+     is consistent with how -initWithLayer: and -presentationLayer work. */
   return !_presentationLayer;
 }
 
@@ -840,43 +848,71 @@ GSCA_OBSERVABLE_SETTER(setShadowOffset, CGSize, shadowOffset, CGSizeEqualToSize)
 /* MARK: - Sublayers */
 - (void) addSublayer: (CALayer *)layer
 {
-  NSMutableArray * mutableSublayers = (NSMutableArray*)_sublayers;
+  /* AR-Q2: check for circular parent-child relationship */
+  CALayer *ancestor = self;
+  while (ancestor)
+    {
+      if (ancestor == layer)
+        {
+          [NSException raise: NSInvalidArgumentException
+                      format: @"addSublayer: would create a cycle — layer %@ is already an ancestor of %@", layer, self];
+        }
+      ancestor = [ancestor superlayer];
+    }
 
-  [mutableSublayers addObject: layer];
+  /* TS-Q2: synchronize sublayer mutation */
+  @synchronized(self)
+    {
+      NSMutableArray * mutableSublayers = (NSMutableArray*)_sublayers;
+      [mutableSublayers addObject: layer];
+    }
   [layer setSuperlayer: self];
 }
 
 - (void)removeFromSuperlayer
 {
-  NSMutableArray * mutableSublayersOfSuperlayer = (NSMutableArray*)[[self superlayer] sublayers];
-
-  [mutableSublayersOfSuperlayer removeObject: self];
+  CALayer *super_ = [self superlayer];
+  /* TS-Q2: synchronize sublayer mutation */
+  @synchronized(super_)
+    {
+      NSMutableArray * mutableSublayersOfSuperlayer = (NSMutableArray*)[super_ sublayers];
+      [mutableSublayersOfSuperlayer removeObject: self];
+    }
   [self setSuperlayer: nil];
 }
 
 - (void) insertSublayer: (CALayer *)layer atIndex: (unsigned)index
 {
-  NSMutableArray * mutableSublayers = (NSMutableArray*)_sublayers;
-
-  [mutableSublayers insertObject: layer atIndex: index];
+  /* TS-Q2: synchronize sublayer mutation */
+  @synchronized(self)
+    {
+      NSMutableArray * mutableSublayers = (NSMutableArray*)_sublayers;
+      [mutableSublayers insertObject: layer atIndex: index];
+    }
   [layer setSuperlayer: self];
 }
 
 - (void) insertSublayer: (CALayer *)layer below: (CALayer *)sibling;
 {
-  NSMutableArray * mutableSublayers = (NSMutableArray*)_sublayers;
-
-  NSInteger siblingIndex = [mutableSublayers indexOfObject: sibling];
-  [mutableSublayers insertObject: layer atIndex:siblingIndex];
+  /* TS-Q2: synchronize sublayer mutation */
+  @synchronized(self)
+    {
+      NSMutableArray * mutableSublayers = (NSMutableArray*)_sublayers;
+      NSInteger siblingIndex = [mutableSublayers indexOfObject: sibling];
+      [mutableSublayers insertObject: layer atIndex:siblingIndex];
+    }
   [layer setSuperlayer: self];
 }
 
 - (void) insertSublayer: (CALayer *)layer above: (CALayer *)sibling;
 {
-  NSMutableArray * mutableSublayers = (NSMutableArray*)_sublayers;
-
-  NSInteger siblingIndex = [mutableSublayers indexOfObject: sibling];
-  [mutableSublayers insertObject: layer atIndex:siblingIndex+1];
+  /* TS-Q2: synchronize sublayer mutation */
+  @synchronized(self)
+    {
+      NSMutableArray * mutableSublayers = (NSMutableArray*)_sublayers;
+      NSInteger siblingIndex = [mutableSublayers indexOfObject: sibling];
+      [mutableSublayers insertObject: layer atIndex:siblingIndex+1];
+    }
   [layer setSuperlayer: self];
 }
 
@@ -932,7 +968,9 @@ GSCA_OBSERVABLE_SETTER(setShadowOffset, CGSize, shadowOffset, CGSizeEqualToSize)
 {
   /* Slides */
   CFTimeInterval activeTime = (timeAuthorityLocalTime - [self beginTime]) * [self speed] + [self timeOffset];
-  assert(activeTime > 0);
+  /* AR-Q1: clamp instead of asserting — negative activeTime is valid when
+     the layer's beginTime has not yet been reached. */
+  if (activeTime < 0) activeTime = 0;
 
   return activeTime;
 }

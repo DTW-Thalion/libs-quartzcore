@@ -36,6 +36,7 @@ NSString *kCATransactionAnimationTimingFunction= @"animationTimingFunction";
 NSString *kCATransactionDisableActions = @"disableActions";
 
 static NSMutableArray *transactionStack = nil;
+static NSLock *transactionLock = nil; /* TS-Q1: protects transactionStack access across threads */
 
 @interface CATransaction ()
 
@@ -55,8 +56,17 @@ static NSMutableArray *transactionStack = nil;
 @synthesize actions=_actions;
 @synthesize implicit=_implicit;
 
++ (void) initialize
+{
+  if (self == [CATransaction class])
+    {
+      transactionLock = [NSLock new];
+    }
+}
+
 + (void) begin
 {
+  [transactionLock lock];
   if (!transactionStack)
     {
       transactionStack = [NSMutableArray new];
@@ -65,14 +75,18 @@ static NSMutableArray *transactionStack = nil;
   CATransaction *newTransaction = [CATransaction new];
   [transactionStack addObject: newTransaction];
   [newTransaction release];
+  [transactionLock unlock];
 }
 
 + (void) commit
 {
-  CATransaction *topTransaction = [self topTransaction];
+  [transactionLock lock];
+  /* Use _topTransactionUnlocked to avoid recursive lock acquisition */
+  CATransaction *topTransaction = [self _topTransactionUnlocked];
   [topTransaction commit];
 
   [transactionStack removeObjectAtIndex: [transactionStack count]-1];
+  [transactionLock unlock];
 }
 
 + (void) flush
@@ -134,15 +148,30 @@ static NSMutableArray *transactionStack = nil;
 }
 
 /* ***** Private class methods ******* */
-+ (CATransaction *) topTransaction
+/* TS-Q1: _topTransactionUnlocked is called when the lock is already held. */
++ (CATransaction *) _topTransactionUnlocked
 {
   if(![transactionStack lastObject])
     {
-      [CATransaction begin];
+      /* Create implicit transaction without going through +begin (which would
+         re-lock).  Duplicate the minimal init logic here. */
+      if (!transactionStack)
+        transactionStack = [NSMutableArray new];
+      CATransaction *newTransaction = [CATransaction new];
+      [transactionStack addObject: newTransaction];
+      [newTransaction release];
       [[transactionStack lastObject] setImplicit: YES];
     }
 
   return [transactionStack lastObject];
+}
+
++ (CATransaction *) topTransaction
+{
+  [transactionLock lock];
+  CATransaction *top = [self _topTransactionUnlocked];
+  [transactionLock unlock];
+  return top;
 }
 
 /* ***** Instance methods ****** */
