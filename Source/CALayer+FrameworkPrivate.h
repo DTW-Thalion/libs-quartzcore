@@ -41,6 +41,7 @@
 - (BOOL)isPresentationLayer;
 
 - (void) discardPresentationLayer;
+- (void) _syncPresentationLayer;
 - (CFTimeInterval) applyAnimationsAtTime: (CFTimeInterval)time;
 - (CFTimeInterval) calculatedNextFrameTime;
 

@@ -663,6 +663,41 @@ GSCA_OBSERVABLE_SETTER(setShadowOffset, CGSize, shadowOffset, CGSizeEqualToSize)
   return _presentationLayer;
 }
 
+- (void) _syncPresentationLayer
+{
+  /* PF-Q1: Update the existing presentation layer in-place from the model
+     layer, avoiding the cost of a full discard + alloc + initWithLayer:.
+     This mirrors the property copies in -initWithLayer:. */
+  if (!_presentationLayer)
+    return;
+
+  [_presentationLayer setDelegate: [self delegate]];
+  [_presentationLayer setLayoutManager: [self layoutManager]];
+  [_presentationLayer setBounds: [self bounds]];
+  [_presentationLayer setAnchorPoint: [self anchorPoint]];
+  [_presentationLayer setPosition: [self position]];
+  [_presentationLayer setOpacity: [self opacity]];
+  [_presentationLayer setTransform: [self transform]];
+  [_presentationLayer setSublayerTransform: [self sublayerTransform]];
+  [_presentationLayer setShouldRasterize: [self shouldRasterize]];
+  [_presentationLayer setOpaque: [self isOpaque]];
+  [_presentationLayer setGeometryFlipped: [self isGeometryFlipped]];
+  [_presentationLayer setBackgroundColor: [self backgroundColor]];
+  [_presentationLayer setBorderColor: [self borderColor]];
+  [_presentationLayer setContentsScale: [self contentsScale]];
+  [_presentationLayer setMasksToBounds: [self masksToBounds]];
+  [_presentationLayer setContentsRect: [self contentsRect]];
+  [_presentationLayer setHidden: [self isHidden]];
+  [_presentationLayer setContentsGravity: [self contentsGravity]];
+  [_presentationLayer setNeedsDisplayOnBoundsChange: [self needsDisplayOnBoundsChange]];
+  [_presentationLayer setZPosition: [self zPosition]];
+  [_presentationLayer setShadowColor: [self shadowColor]];
+  [_presentationLayer setShadowOffset: [self shadowOffset]];
+  [_presentationLayer setShadowOpacity: [self shadowOpacity]];
+  [_presentationLayer setShadowPath: [self shadowPath]];
+  [_presentationLayer setShadowRadius: [self shadowRadius]];
+}
+
 - (void) discardPresentationLayer
 {
   [_presentationLayer release];

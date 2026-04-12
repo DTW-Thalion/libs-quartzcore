@@ -322,11 +322,11 @@
 
   [CALayer setCurrentFrameBeginTime: theTime];
 
-  /* Destroy and then recreate the presentation layer.
-     This is the easiest way to reset it to default values. */
-  /* TODO PF-Q1: Recreating the presentation layer every frame is expensive.
-     Consider caching and incrementally updating it instead of full discard/recreate. */
-  [layer discardPresentationLayer];
+  /* PF-Q1: Instead of discarding and recreating the presentation layer every
+     frame, sync the existing one in-place from the model layer.  The first
+     call to -presentationLayer will lazily create it; subsequent frames just
+     update properties, eliminating an alloc+dealloc per layer per frame. */
+  [layer _syncPresentationLayer];
   CALayer * presentationLayer = [layer presentationLayer];
 
   /* Tell the presentation layer to apply animations. */
