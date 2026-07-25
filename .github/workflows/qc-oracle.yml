@@ -11,3 +11,9 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_probe.m -o qc_probe
           ./qc_probe 2>&1
+      - name: Compile and run the CAMediaTimingFunction probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_timing_probe.m -o qc_timing_probe
+          ./qc_timing_probe 2>&1
