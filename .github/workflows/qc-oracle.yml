@@ -1,0 +1,13 @@
+name: QuartzCore oracle
+on: push
+jobs:
+  probe:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run the QuartzCore probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_probe.m -o qc_probe
+          ./qc_probe 2>&1
