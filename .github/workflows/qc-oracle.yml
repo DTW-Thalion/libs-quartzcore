@@ -17,3 +17,9 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_timing_probe.m -o qc_timing_probe
           ./qc_timing_probe 2>&1
+      - name: Compile and run the affine bridge probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_affine_probe.m -o qc_affine_probe
+          ./qc_affine_probe 2>&1
