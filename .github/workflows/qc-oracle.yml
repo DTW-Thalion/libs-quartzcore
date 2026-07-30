@@ -23,3 +23,9 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_affine_probe.m -o qc_affine_probe
           ./qc_affine_probe 2>&1
+      - name: Compile and run the CALayer geometry probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_calayer_geometry_probe.m -o qc_calayer_geometry_probe
+          ./qc_calayer_geometry_probe 2>&1
