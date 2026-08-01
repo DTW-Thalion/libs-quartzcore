@@ -41,3 +41,9 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_calayer_kvo_probe.m -o qc_calayer_kvo_probe
           ./qc_calayer_kvo_probe 2>&1
+      - name: Compile and run the CATransaction probe
+        run: |
+          clang -Wno-deprecated-declarations -fobjc-arc \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_transaction_probe.m -o qc_transaction_probe
+          ./qc_transaction_probe 2>&1
