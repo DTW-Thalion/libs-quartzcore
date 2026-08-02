@@ -89,6 +89,12 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_action_probe.m -o qc_action_probe
           ./qc_action_probe 2>&1
+      - name: Compile and run the layout flag probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_layoutflag_probe.m -o qc_layoutflag_probe
+          ./qc_layoutflag_probe 2>&1
       - name: Compile and run the sublayers probe
         run: |
           clang -Wno-deprecated-declarations \
