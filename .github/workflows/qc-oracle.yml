@@ -189,3 +189,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_scrollrect_probe.m -o qc_scrollrect_probe
           ./qc_scrollrect_probe 2>&1
+      - name: Compile and run the text layer probe
+        run: |
+          clang -Wno-deprecated-declarations -fobjc-arc             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_textlayer_probe.m -o qc_textlayer_probe
+          ./qc_textlayer_probe 2>&1
