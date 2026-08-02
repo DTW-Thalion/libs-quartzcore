@@ -89,6 +89,13 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_action_probe.m -o qc_action_probe
           ./qc_action_probe 2>&1
+      - name: Compile and run the thread stack probe
+        timeout-minutes: 3
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_threadstack_probe.m -o qc_threadstack_probe
+          ./qc_threadstack_probe 2>&1
       - name: Compile and run the flush and lock probe
         timeout-minutes: 3
         run: |
