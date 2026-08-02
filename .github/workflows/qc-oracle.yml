@@ -77,3 +77,9 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_animation_probe.m -o qc_animation_probe
           ./qc_animation_probe 2>&1
+      - name: Compile and run the layer state probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_layer_state_probe.m -o qc_layer_state_probe
+          ./qc_layer_state_probe 2>&1
