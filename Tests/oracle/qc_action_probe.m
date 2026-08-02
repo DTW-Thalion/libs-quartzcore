@@ -8,22 +8,22 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
-@interface Marker : CAAnimation
+@interface QCMarker : CAAnimation
 @property (retain) NSString *tag;
 @end
 
-@implementation Marker
+@implementation QCMarker
 @synthesize tag = _tag;
 @end
 
-@interface Delegate : NSObject <CALayerDelegate>
+@interface QCActionDelegate : NSObject <CALayerDelegate>
 {
   id _answer;
 }
 - (void) setAnswer: (id)answer;
 @end
 
-@implementation Delegate
+@implementation QCActionDelegate
 - (void) setAnswer: (id)answer
 {
   _answer = answer;
@@ -34,9 +34,9 @@
 }
 @end
 
-static Marker *marker(NSString *tag)
+static QCMarker *marker(NSString *tag)
 {
-  Marker *m = [Marker animation];
+  QCMarker *m = [QCMarker animation];
 
   [m setTag: tag];
   return m;
@@ -46,8 +46,8 @@ static const char *tagOf(id action)
 {
   if (action == nil)
     return "(nil)";
-  if ([action isKindOfClass: [Marker class]])
-    return [[(Marker *)action tag] UTF8String];
+  if ([action isKindOfClass: [QCMarker class]])
+    return [[(QCMarker *)action tag] UTF8String];
   return [[action description] UTF8String];
 }
 
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
       printf("\n=== the delegate ===\n");
       {
         CALayer *l = [CALayer layer];
-        Delegate *d = [[[Delegate alloc] init] autorelease];
+        QCActionDelegate *d = [[[QCActionDelegate alloc] init] autorelease];
 
         [l setDelegate: d];
 
