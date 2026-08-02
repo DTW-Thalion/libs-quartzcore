@@ -157,3 +157,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_clock_probe.m -o qc_clock_probe
           ./qc_clock_probe 2>&1
+      - name: Compile and run the dynamic property probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_dynprop_probe.m -o qc_dynprop_probe
+          ./qc_dynprop_probe 2>&1
