@@ -89,6 +89,13 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_action_probe.m -o qc_action_probe
           ./qc_action_probe 2>&1
+      - name: Compile and run the completion block probe
+        timeout-minutes: 3
+        run: |
+          clang -Wno-deprecated-declarations -fobjc-arc \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_completion_probe.m -o qc_completion_probe
+          ./qc_completion_probe 2>&1
       - name: Compile and run the thread stack probe
         timeout-minutes: 3
         run: |
