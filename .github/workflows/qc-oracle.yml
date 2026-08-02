@@ -89,6 +89,12 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_action_probe.m -o qc_action_probe
           ./qc_action_probe 2>&1
+      - name: Compile and run the hit test probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_hittest_probe.m -o qc_hittest_probe
+          ./qc_hittest_probe 2>&1
       - name: Compile and run the display and layout probe
         run: |
           clang -Wno-deprecated-declarations \
