@@ -177,3 +177,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_implicit_probe.m -o qc_implicit_probe
           ./qc_implicit_probe 2>&1
+      - name: Compile and run the layer subclass probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_layerclasses_probe.m -o qc_layerclasses_probe
+          ./qc_layerclasses_probe 2>&1
