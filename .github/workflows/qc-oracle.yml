@@ -65,3 +65,9 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_timing_defaults_probe.m -o qc_timing_defaults_probe
           ./qc_timing_defaults_probe 2>&1
+      - name: Compile and run the convertTime probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_converttime_probe.m -o qc_converttime_probe
+          ./qc_converttime_probe 2>&1
