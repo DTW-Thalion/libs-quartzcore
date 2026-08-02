@@ -83,3 +83,9 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_layer_state_probe.m -o qc_layer_state_probe
           ./qc_layer_state_probe 2>&1
+      - name: Compile and run the action lookup probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_action_probe.m -o qc_action_probe
+          ./qc_action_probe 2>&1
