@@ -47,3 +47,9 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_transaction_probe.m -o qc_transaction_probe
           ./qc_transaction_probe 2>&1
+      - name: Compile and run the string constant probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_constants_probe.m -o qc_constants_probe
+          ./qc_constants_probe 2>&1
