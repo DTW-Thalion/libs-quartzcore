@@ -169,3 +169,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_valuefn_probe.m -o qc_valuefn_probe
           ./qc_valuefn_probe 2>&1
+      - name: Compile and run the timing function solver probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_timingsolve_probe.m -o qc_timingsolve_probe
+          ./qc_timingsolve_probe 2>&1
