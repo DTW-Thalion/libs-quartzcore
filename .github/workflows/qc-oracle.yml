@@ -89,3 +89,7 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_action_probe.m -o qc_action_probe
           ./qc_action_probe 2>&1
+      - name: Compile and run the CG key-value probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_cgkvc_probe.m -o qc_cgkvc_probe
+          ./qc_cgkvc_probe 2>&1
