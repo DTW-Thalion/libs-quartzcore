@@ -77,18 +77,8 @@ int main(void)
           printf("sharing check RAISED %s\n", [[e reason] UTF8String]);
         }
 
-      @try
-        {
-          CAValueFunction *plain = [[CAValueFunction alloc] init];
-          printf("alloc/init gives %s, name=%s\n",
-                 [[plain description] UTF8String],
-                 [plain name] ? [[plain name] UTF8String] : "(nil)");
-        }
-      @catch (NSException *e)
-        {
-          printf("alloc/init RAISED %s: %s\n", [[e name] UTF8String],
-                 [[e reason] UTF8String]);
-        }
+      /* [[CAValueFunction alloc] init] segmentation faults on Apple, so it
+         is not called here. */
 
       /* archiving */
       @try
