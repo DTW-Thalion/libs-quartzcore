@@ -185,3 +185,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_layerclasses2_probe.m -o qc_layerclasses2_probe
           ./qc_layerclasses2_probe 2>&1
+      - name: Compile and run the scrollToRect probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_scrollrect_probe.m -o qc_scrollrect_probe
+          ./qc_scrollrect_probe 2>&1
