@@ -30,6 +30,9 @@ static void reportFunction(NSString *name)
 
 int main(void)
 {
+  /* Unbuffered: a crash otherwise takes the whole trail with it. */
+  setbuf(stdout, NULL);
+
   @autoreleasepool
     {
       printf("== CAValueFunction ==\n");
