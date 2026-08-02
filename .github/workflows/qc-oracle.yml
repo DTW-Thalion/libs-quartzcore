@@ -71,3 +71,9 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_converttime_probe.m -o qc_converttime_probe
           ./qc_converttime_probe 2>&1
+      - name: Compile and run the animation probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_animation_probe.m -o qc_animation_probe
+          ./qc_animation_probe 2>&1
