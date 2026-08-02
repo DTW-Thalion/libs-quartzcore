@@ -161,3 +161,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_dynprop_probe.m -o qc_dynprop_probe
           ./qc_dynprop_probe 2>&1
+      - name: Compile and run the dynamic character property probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_dynchar_probe.m -o qc_dynchar_probe
+          ./qc_dynchar_probe 2>&1
