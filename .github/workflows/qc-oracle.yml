@@ -59,3 +59,9 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_shapelayer_probe.m -o qc_shapelayer_probe
           ./qc_shapelayer_probe 2>&1
+      - name: Compile and run the media timing defaults probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_timing_defaults_probe.m -o qc_timing_defaults_probe
+          ./qc_timing_defaults_probe 2>&1
