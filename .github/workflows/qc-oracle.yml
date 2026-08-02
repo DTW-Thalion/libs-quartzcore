@@ -53,3 +53,9 @@ jobs:
             -framework QuartzCore -framework CoreGraphics -framework Foundation \
             Tests/oracle/qc_constants_probe.m -o qc_constants_probe
           ./qc_constants_probe 2>&1
+      - name: Compile and run the CAShapeLayer probe
+        run: |
+          clang -Wno-deprecated-declarations \
+            -framework QuartzCore -framework CoreGraphics -framework Foundation \
+            Tests/oracle/qc_shapelayer_probe.m -o qc_shapelayer_probe
+          ./qc_shapelayer_probe 2>&1
