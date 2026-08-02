@@ -153,3 +153,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_cgkvc_probe.m -o qc_cgkvc_probe
           ./qc_cgkvc_probe 2>&1
+      - name: Compile and run the media time clock probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_clock_probe.m -o qc_clock_probe
+          ./qc_clock_probe 2>&1
