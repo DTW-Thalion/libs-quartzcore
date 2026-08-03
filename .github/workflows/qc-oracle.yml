@@ -209,3 +209,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_emitter_probe.m -o qc_emitter_probe
           ./qc_emitter_probe 2>&1
+      - name: Compile and run the protocols probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_protocols_probe.m -o qc_protocols_probe
+          ./qc_protocols_probe 2>&1
