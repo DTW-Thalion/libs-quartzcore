@@ -197,3 +197,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_constraint_probe.m -o qc_constraint_probe
           ./qc_constraint_probe 2>&1
+      - name: Compile and run the second constraint probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_constraint2_probe.m -o qc_constraint2_probe
+          ./qc_constraint2_probe 2>&1
