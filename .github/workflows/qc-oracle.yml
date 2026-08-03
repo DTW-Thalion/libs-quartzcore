@@ -221,3 +221,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_keyframe_probe.m -o qc_keyframe_probe
           ./qc_keyframe_probe 2>&1
+      - name: Compile and run the redisplay probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_redisplay_probe.m -o qc_redisplay_probe
+          ./qc_redisplay_probe 2>&1
