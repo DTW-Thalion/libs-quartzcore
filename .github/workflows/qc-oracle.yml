@@ -217,3 +217,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_protocols2_probe.m -o qc_protocols2_probe
           ./qc_protocols2_probe 2>&1
+      - name: Compile and run the keyframe probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_keyframe_probe.m -o qc_keyframe_probe
+          ./qc_keyframe_probe 2>&1
