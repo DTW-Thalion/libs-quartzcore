@@ -205,3 +205,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_constraint3_probe.m -o qc_constraint3_probe
           ./qc_constraint3_probe 2>&1
+      - name: Compile and run the emitter probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_emitter_probe.m -o qc_emitter_probe
+          ./qc_emitter_probe 2>&1
