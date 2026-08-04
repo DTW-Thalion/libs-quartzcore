@@ -241,3 +241,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_protocolcalls3_probe.m -o qc_protocolcalls3_probe
           ./qc_protocolcalls3_probe 2>&1
+      - name: Compile and run the transition properties probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_transitionprops_probe.m -o qc_transitionprops_probe
+          ./qc_transitionprops_probe 2>&1
