@@ -249,3 +249,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_tranche_probe.m -o qc_tranche_probe
           ./qc_tranche_probe 2>&1
+      - name: Compile and run the second tranche probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_tranche2_probe.m -o qc_tranche2_probe
+          ./qc_tranche2_probe 2>&1
