@@ -233,3 +233,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_protocolcalls_probe.m -o qc_protocolcalls_probe
           ./qc_protocolcalls_probe 2>&1
+      - name: Compile and run the second protocol calls probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_protocolcalls2_probe.m -o qc_protocolcalls2_probe
+          ./qc_protocolcalls2_probe 2>&1
