@@ -313,8 +313,3 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations -framework QuartzCore -framework CoreGraphics -framework Foundation Tests/oracle/qc_replicator_probe.m -o qc_replicator_probe
           ./qc_replicator_probe 2>&1
-      - name: Compile and run the third replicator probe
-        timeout-minutes: 3
-        run: |
-          clang -Wno-deprecated-declarations -framework QuartzCore -framework CoreGraphics -framework Foundation -framework OpenGL Tests/oracle/qc_replicator3_probe.m -o qc_replicator3_probe
-          ./qc_replicator3_probe 2>&1
