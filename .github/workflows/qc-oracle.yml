@@ -245,3 +245,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_transitionprops_probe.m -o qc_transitionprops_probe
           ./qc_transitionprops_probe 2>&1
+      - name: Compile and run the tranche probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_tranche_probe.m -o qc_tranche_probe
+          ./qc_tranche_probe 2>&1
