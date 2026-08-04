@@ -277,3 +277,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations -Wno-objc-method-access             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_tranche7_probe.m -o qc_tranche7_probe
           ./qc_tranche7_probe 2>&1
+      - name: Compile and run the tranche 8 probe
+        run: |
+          clang -Wno-deprecated-declarations -Wno-objc-method-access             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_tranche8_probe.m -o qc_tranche8_probe
+          ./qc_tranche8_probe 2>&1
