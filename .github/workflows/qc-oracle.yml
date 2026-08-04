@@ -285,3 +285,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_gravity_probe.m -o qc_gravity_probe
           ./qc_gravity_probe 2>&1
+      - name: Compile and run the corner probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_corner_probe.m -o qc_corner_probe
+          ./qc_corner_probe 2>&1
