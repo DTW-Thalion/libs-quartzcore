@@ -313,3 +313,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations -framework QuartzCore -framework CoreGraphics -framework Foundation Tests/oracle/qc_replicator_probe.m -o qc_replicator_probe
           ./qc_replicator_probe 2>&1
+      - name: Compile and run the dash probe
+        run: |
+          clang -Wno-deprecated-declarations -framework QuartzCore -framework CoreGraphics -framework Foundation Tests/oracle/qc_dash_probe.m -o qc_dash_probe
+          ./qc_dash_probe 2>&1
