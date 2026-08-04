@@ -257,3 +257,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_tranche3_probe.m -o qc_tranche3_probe
           ./qc_tranche3_probe 2>&1
+      - name: Compile and run the fourth tranche probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_tranche4_probe.m -o qc_tranche4_probe
+          ./qc_tranche4_probe 2>&1
