@@ -293,3 +293,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations -framework QuartzCore -framework CoreGraphics -framework Foundation Tests/oracle/qc_shape_probe.m -o qc_shape_probe
           ./qc_shape_probe 2>&1
+      - name: Compile and run the gradient probe
+        run: |
+          clang -Wno-deprecated-declarations -framework QuartzCore -framework CoreGraphics -framework Foundation Tests/oracle/qc_gradient_probe.m -o qc_gradient_probe
+          ./qc_gradient_probe 2>&1
