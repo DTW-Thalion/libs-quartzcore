@@ -261,3 +261,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_tranche4_probe.m -o qc_tranche4_probe
           ./qc_tranche4_probe 2>&1
+      - name: Compile and run the render probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_render_probe.m -o qc_render_probe
+          ./qc_render_probe 2>&1
