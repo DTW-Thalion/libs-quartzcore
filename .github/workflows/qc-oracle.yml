@@ -281,3 +281,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations -Wno-objc-method-access             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_tranche8_probe.m -o qc_tranche8_probe
           ./qc_tranche8_probe 2>&1
+      - name: Compile and run the gravity probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_gravity_probe.m -o qc_gravity_probe
+          ./qc_gravity_probe 2>&1
