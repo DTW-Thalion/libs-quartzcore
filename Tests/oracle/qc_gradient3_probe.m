@@ -50,6 +50,7 @@ int main(void)
   @autoreleasepool {
     CGColorRef red = CGColorCreateGenericRGB(1, 0, 0, 1);
     CGColorRef blue = CGColorCreateGenericRGB(0, 0, 1, 1);
+    CGColorRef greenBorder = CGColorCreateGenericRGB(0, 1, 0, 1);
     CGImageRef image = greenImage(20, 10);
 
     printf("=== a shape layer with contents as well ===\n");
@@ -79,7 +80,7 @@ int main(void)
       [g setBounds: CGRectMake(0, 0, 80, 60)];
       [g setColors: [NSArray arrayWithObjects: (id)red, (id)blue, nil]];
       [g setBorderWidth: 6];
-      [g setBorderColor: [[NSColor greenColor] CGColor]];
+      [g setBorderColor: greenBorder];
       [g renderInContext: c];
       sample(c, 2, 30, "on the border");
       sample(c, 40, 30, "inside it");
@@ -97,7 +98,7 @@ int main(void)
       [s setPath: path];
       [s setFillColor: red];
       [s setBorderWidth: 6];
-      [s setBorderColor: [[NSColor greenColor] CGColor]];
+      [s setBorderColor: greenBorder];
       [s renderInContext: c];
       sample(c, 2, 30, "on the border");
       sample(c, 40, 30, "inside it");
@@ -108,6 +109,7 @@ int main(void)
     CGImageRelease(image);
     CGColorRelease(red);
     CGColorRelease(blue);
+    CGColorRelease(greenBorder);
   }
   return 0;
 }
