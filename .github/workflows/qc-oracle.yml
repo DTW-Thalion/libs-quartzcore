@@ -229,3 +229,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_dynstruct_probe.m -o qc_dynstruct_probe
           ./qc_dynstruct_probe 2>&1
+      - name: Compile and run the protocol calls probe
+        run: |
+          clang -Wno-deprecated-declarations             -framework QuartzCore -framework CoreGraphics -framework Foundation             Tests/oracle/qc_protocolcalls_probe.m -o qc_protocolcalls_probe
+          ./qc_protocolcalls_probe 2>&1
