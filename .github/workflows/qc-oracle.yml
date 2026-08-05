@@ -337,3 +337,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations -framework QuartzCore -framework CoreGraphics -framework Foundation Tests/oracle/qc_shadow_probe.m -o qc_shadow_probe
           ./qc_shadow_probe 2>&1
+      - name: Compile and run the second shadow probe
+        run: |
+          clang -Wno-deprecated-declarations -framework QuartzCore -framework CoreGraphics -framework Foundation Tests/oracle/qc_shadow2_probe.m -o qc_shadow2_probe
+          ./qc_shadow2_probe 2>&1
