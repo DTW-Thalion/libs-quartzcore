@@ -341,3 +341,7 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations -framework QuartzCore -framework CoreGraphics -framework Foundation Tests/oracle/qc_shadow2_probe.m -o qc_shadow2_probe
           ./qc_shadow2_probe 2>&1
+      - name: Compile and run the transparency layer shadow probe
+        run: |
+          clang -Wno-deprecated-declarations -framework CoreGraphics -framework Foundation Tests/oracle/qc_shadow3_probe.m -o qc_shadow3_probe
+          ./qc_shadow3_probe 2>&1
