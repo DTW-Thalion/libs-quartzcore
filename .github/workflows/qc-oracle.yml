@@ -321,6 +321,10 @@ jobs:
         run: |
           clang -Wno-deprecated-declarations -framework CoreText -framework CoreGraphics -framework Foundation Tests/oracle/qc_truncate_probe.m -o qc_truncate_probe
           ./qc_truncate_probe 2>&1
+      - name: Compile and run the presentation layer probe
+        run: |
+          clang -Wno-deprecated-declarations -framework QuartzCore -framework CoreGraphics -framework Foundation Tests/oracle/qc_presentation_probe.m -o qc_presentation_probe
+          ./qc_presentation_probe 2>&1
       - name: Compile and run the second line truncation probe
         run: |
           clang -Wno-deprecated-declarations -framework CoreText -framework CoreGraphics -framework Foundation Tests/oracle/qc_truncate2_probe.m -o qc_truncate2_probe
