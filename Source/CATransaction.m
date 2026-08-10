@@ -41,6 +41,12 @@ static NSMutableArray *transactionStack = nil;
 
 - (void) commit;
 
+/* The three keys a transaction defines itself, as typed accessors over
+   -values.  Any other key a caller sets is carried in -values alone. */
+@property (assign) CFTimeInterval animationDuration;
+@property (retain) CAMediaTimingFunction *animationTimingFunction;
+@property (assign) BOOL disableActions;
+
 @property (retain) NSMutableDictionary *values;
 @property (retain) NSMutableArray *actions;
 @property (assign, getter=isImplicit) BOOL implicit;
@@ -104,31 +110,61 @@ static NSMutableArray *transactionStack = nil;
 
 + (CFTimeInterval) animationDuration
 {
-  return [[self valueForKey: kCATransactionAnimationDuration] doubleValue];
+  return [[self topTransaction] animationDuration];
 }
 
 + (void) setAnimationDuration: (CFTimeInterval)animationDuration
+{
+  [[self topTransaction] setAnimationDuration: animationDuration];
+}
+
++ (CAMediaTimingFunction *) animationTimingFunction
+{
+  return [[self topTransaction] animationTimingFunction];
+}
+
++ (void) setAnimationTimingFunction: (CAMediaTimingFunction *)function
+{
+  [[self topTransaction] setAnimationTimingFunction: function];
+}
+
++ (BOOL) disableActions
+{
+  return [[self topTransaction] disableActions];
+}
+
++ (void) setDisableActions: (BOOL)disableActions
+{
+  [[self topTransaction] setDisableActions: disableActions];
+}
+
+- (CFTimeInterval) animationDuration
+{
+  return [[self valueForKey: kCATransactionAnimationDuration] doubleValue];
+}
+
+- (void) setAnimationDuration: (CFTimeInterval)animationDuration
 {
   [self setValue: [NSNumber numberWithDouble: animationDuration]
           forKey: kCATransactionAnimationDuration];
 }
 
-+ (CAMediaTimingFunction *) animationTimingFunction
+- (CAMediaTimingFunction *) animationTimingFunction
 {
   return [self valueForKey: kCATransactionAnimationTimingFunction];
 }
 
-+ (void) setAnimationTimingFunction: (CAMediaTimingFunction *)function
+- (void) setAnimationTimingFunction: (CAMediaTimingFunction *)function
 {
   [self setValue: function forKey: kCATransactionAnimationTimingFunction];
 }
 
-+ (BOOL) disableActions
+- (BOOL) disableActions
 {
   return [[self valueForKey: kCATransactionDisableActions] boolValue];
 }
 
-+ (void) setDisableActions: (BOOL)disableActions
+- (void) setDisableActions: (BOOL)disableActions
 {
   [self setValue: [NSNumber numberWithBool: disableActions]
           forKey: kCATransactionDisableActions];
