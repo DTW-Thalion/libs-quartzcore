@@ -252,6 +252,8 @@
    should be rendering the update region only. */
 - (void) render
 {
+  GLfloat projection[16];
+
   /* If we have nothing to render, just skip rendering */
   CGRect updateBounds = [self updateBounds];
   if (isinf(updateBounds.origin.x) &&
@@ -264,8 +266,8 @@
      they are taken as normalised device coordinates, where anything two
      units or more across covers the whole drawable.  Map the renderer's
      bounds onto it instead, so that a point is a point. */
+  glGetFloatv(GL_PROJECTION_MATRIX, projection);
   glMatrixMode(GL_PROJECTION);
-  glPushMatrix();
   glLoadIdentity();
   glOrtho(CGRectGetMinX(_bounds), CGRectGetMaxX(_bounds),
           CGRectGetMinY(_bounds), CGRectGetMaxY(_bounds),
@@ -288,7 +290,7 @@
 
   /* Restore defaults */
   glMatrixMode(GL_PROJECTION);
-  glPopMatrix();
+  glLoadMatrixf(projection);
 
   glMatrixMode(GL_MODELVIEW);
   glClearColor(0.0, 0.0, 0.0, 0.0);
