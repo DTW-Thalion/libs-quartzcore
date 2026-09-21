@@ -274,6 +274,15 @@ CALayerApplyAbout(CGAffineTransform t, CGPoint p, CGPoint pivot)
          just like Opal's Objective-C class instances */
       return [(id)CGColorCreateGenericRGB(0.0, 0.0, 0.0, 1.0) autorelease];
     }
+  if ([key isEqualToString: @"borderColor"])
+    {
+      /* opaque black, as for the shadow colour above */
+      return [(id)CGColorCreateGenericRGB(0.0, 0.0, 0.0, 1.0) autorelease];
+    }
+  if ([key isEqualToString: @"contentsGravity"])
+    {
+      return kCAGravityResize;
+    }
   if ([key isEqualToString: @"shadowOffset"])
     {
       CGSize offset = CGSizeMake(0.0, -3.0);
