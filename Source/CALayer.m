@@ -300,11 +300,16 @@ CALayerApplyAbout(CGAffineTransform t, CGPoint p, CGPoint pivot)
     }
   if ([key isEqualToString:@"repeatCount"])
     {
-      return [NSNumber numberWithFloat: 1.0];
+      /* Zero means no repetition was asked for, not none at all. */
+      return [NSNumber numberWithFloat: 0.0];
     }
   if ([key isEqualToString: @"beginTime"])
     {
       return [NSNumber numberWithFloat: 0.0];
+    }
+  if ([key isEqualToString: @"fillMode"])
+    {
+      return kCAFillModeRemoved;
     }
 
   return nil;
@@ -327,7 +332,7 @@ CALayerApplyAbout(CGAffineTransform t, CGPoint p, CGPoint pivot)
         @"backgroundColor", @"borderColor", @"contentsScale",
 
         @"beginTime", @"duration", @"speed", @"autoreverses",
-        @"repeatCount",
+        @"repeatCount", @"fillMode",
 
         @"shadowColor", @"shadowOffset", @"shadowOpacity",
         @"shadowPath", @"shadowRadius",
@@ -907,7 +912,12 @@ GSCA_OBSERVABLE_SETTER(setShadowOffset, CGSize, shadowOffset, CGSizeEqualToSize)
       if ([animation isKindOfClass: [CAPropertyAnimation class]] ||
           [animation isKindOfClass: [CAAnimationGroup class]])
         {
-          if ([animation removedOnCompletion] && [animation activeTimeWithTimeAuthorityLocalTime: [self localTime]] > [animation duration] * [animation repeatCount] * ([animation autoreverses] ? 2 : 1))
+          /* A repeat count of zero asks for no repetition, so the animation
+             still runs through once. */
+          float repetitions = [animation repeatCount] > 0
+            ? [animation repeatCount] : 1;
+
+          if ([animation removedOnCompletion] && [animation activeTimeWithTimeAuthorityLocalTime: [self localTime]] > [animation duration] * repetitions * ([animation autoreverses] ? 2 : 1))
             {
               /* FIXME: doesn't take into account speed */
 
@@ -1102,7 +1112,20 @@ GSCA_OBSERVABLE_SETTER(setShadowOffset, CGSize, shadowOffset, CGSizeEqualToSize)
 - (CFTimeInterval) convertTime: (CFTimeInterval)theTime fromLayer: (CALayer *)layer
 {
   if (layer == nil)
-    return [self localTime];
+    {
+      /* theTime is in the "media time" timespace, so bring it down into
+         ours the same way -convertTime:toLayer: brings a media time into a
+         layer.  The time given is what is being converted; the current one
+         is not. */
+      CFTimeInterval oldFrameBeginTime = currentFrameBeginTime;
+      CFTimeInterval converted;
+
+      currentFrameBeginTime = theTime;
+      converted = [self activeTime];
+      currentFrameBeginTime = oldFrameBeginTime;
+
+      return converted;
+    }
 
   /* Just make use of convertTime:toLayer: instead of reimplementing */
   return [layer convertTime: theTime toLayer: self];
@@ -1280,7 +1303,7 @@ GSCA_OBSERVABLE_SETTER(setShadowOffset, CGSize, shadowOffset, CGSizeEqualToSize)
     }
   if ([key isEqualToString: @"shadowPath"])
     {
-      return (id)[self shadowColor];
+      return (id)[self shadowPath];
     }
 
   return [super valueForUndefinedKey: key];
