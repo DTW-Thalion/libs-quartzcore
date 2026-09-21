@@ -765,7 +765,9 @@ GSCA_OBSERVABLE_SETTER(setShadowOffset, CGSize, shadowOffset, CGSizeEqualToSize)
 
 - (id) modelLayer
 {
-  return _modelLayer;
+  /* A layer that is not standing in for another one is its own model.
+     -isPresentationLayer reads the ivar directly, so it is unaffected. */
+  return _modelLayer ? _modelLayer : self;
 }
 
 - (void) setModelLayer: (id)modelLayer
