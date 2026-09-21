@@ -768,6 +768,29 @@ GSCA_OBSERVABLE_SETTER(setShadowOffset, CGSize, shadowOffset, CGSizeEqualToSize)
   return _modelLayer;
 }
 
+- (void) setSublayers: (NSArray *)sublayers
+{
+  NSArray *oldSublayers = _sublayers;
+  CALayer *layer;
+
+  if (sublayers == _sublayers)
+    return;
+
+  for (layer in oldSublayers)
+    {
+      if (![sublayers containsObject: layer])
+        [layer setSuperlayer: nil];
+    }
+
+  _sublayers = [sublayers mutableCopy];
+  [oldSublayers release];
+
+  for (layer in _sublayers)
+    {
+      [layer setSuperlayer: self];
+    }
+}
+
 - (void) setModelLayer: (id)modelLayer
 {
   _modelLayer = modelLayer;
