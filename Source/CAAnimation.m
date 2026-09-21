@@ -36,7 +36,20 @@
 #import "CAMediaTimingFunction+FrameworkPrivate.h"
 #import "CALayer+FrameworkPrivate.h"
 
-NSString *const kCAAnimationDiscrete = @"CAAnimationDiscrete";
+NSString *const kCAAnimationLinear = @"linear";
+NSString *const kCAAnimationDiscrete = @"discrete";
+NSString *const kCAAnimationPaced = @"paced";
+NSString *const kCAAnimationCubic = @"cubic";
+NSString *const kCAAnimationCubicPaced = @"cubicPaced";
+
+NSString *const kCATransitionFade = @"fade";
+NSString *const kCATransitionMoveIn = @"moveIn";
+NSString *const kCATransitionPush = @"push";
+NSString *const kCATransitionReveal = @"reveal";
+NSString *const kCATransitionFromTop = @"fromTop";
+NSString *const kCATransitionFromBottom = @"fromBottom";
+NSString *const kCATransitionFromLeft = @"fromLeft";
+NSString *const kCATransitionFromRight = @"fromRight";
 
 @interface CAAnimation ()
 @property (retain) NSPointerArray *layers;
@@ -133,7 +146,12 @@ NSString *const kCAAnimationDiscrete = @"CAAnimationDiscrete";
     }
   if ([key isEqualToString:@"repeatCount"])
     {
-      return [NSNumber numberWithFloat: 1.0];
+      /* Zero means no repetition was asked for, not none at all. */
+      return [NSNumber numberWithFloat: 0.0];
+    }
+  if ([key isEqualToString:@"fillMode"])
+    {
+      return kCAFillModeRemoved;
     }
   return nil;
 }
@@ -152,7 +170,7 @@ NSString *const kCAAnimationDiscrete = @"CAAnimationDiscrete";
 
   static NSString * keys[] = {
     @"delegate", @"removedOnCompletion", @"timingFunction",
-    /*@"duration", */@"speed", @"autoreverses", @"repeatCount"};
+    /*@"duration", */@"speed", @"autoreverses", @"repeatCount", @"fillMode"};
     /* Duration intentionally skipped so it gets picked up from transaction */
   for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
     {
@@ -177,7 +195,7 @@ NSString *const kCAAnimationDiscrete = @"CAAnimationDiscrete";
 
   static NSString * keys[] = {
     @"delegate", @"removedOnCompletion", @"timingFunction",
-    @"duration", @"speed", @"autoreverses", @"repeatCount"};
+    @"duration", @"speed", @"autoreverses", @"repeatCount", @"fillMode"};
   for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
     {
       if ([aDecoder containsValueForKey: keys[i]])
@@ -194,25 +212,28 @@ NSString *const kCAAnimationDiscrete = @"CAAnimationDiscrete";
 {
   static NSString * keys[] = {
     @"delegate", @"removedOnCompletion", @"timingFunction",
-    @"duration", @"speed", @"autoreverses", @"repeatCount"};
+    @"duration", @"speed", @"autoreverses", @"repeatCount", @"fillMode"};
   for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
     {
       if ([[self class] shouldArchiveValueForKey: keys[i]])
         {
-          [self encodeWithCoder: aCoder];
+          [aCoder encodeObject: [self valueForKey: keys[i]]
+                        forKey: keys[i]];
         }
     }
 }
 
 - (id) copyWithZone: (NSZone *)zone
 {
-  id theCopy = [[self class] allocWithZone: zone];
+  /* -init and not just +allocWithZone:, or the copy is left without the
+     things -init sets up for it. */
+  id theCopy = [[[self class] allocWithZone: zone] init];
   if (!theCopy)
     return nil;
 
   static NSString * keys[] = {
     @"delegate", @"removedOnCompletion", @"timingFunction",
-    @"duration", @"speed", @"autoreverses", @"repeatCount"};
+    @"duration", @"speed", @"autoreverses", @"repeatCount", @"fillMode"};
   for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
     {
       id value = [self valueForKey: keys[i]];
@@ -339,11 +360,12 @@ NSString *const kCAAnimationDiscrete = @"CAAnimationDiscrete";
 
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
-  self = [self init];
+  self = [super initWithCoder: aDecoder];
   if (!self)
     return nil;
 
-  static NSString * keys[] = {@"additive", @"cumulative", @"valueFunction"};
+  static NSString * keys[] = {@"keyPath", @"additive", @"cumulative",
+    @"valueFunction"};
   for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
     {
       if ([aDecoder containsValueForKey: keys[i]])
@@ -358,12 +380,16 @@ NSString *const kCAAnimationDiscrete = @"CAAnimationDiscrete";
 
 - (void) encodeWithCoder: (NSCoder *)aCoder
 {
-  static NSString * keys[] = {@"additive", @"cumulative", @"valueFunction"};
+  [super encodeWithCoder: aCoder];
+
+  static NSString * keys[] = {@"keyPath", @"additive", @"cumulative",
+    @"valueFunction"};
   for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
     {
       if ([[self class] shouldArchiveValueForKey: keys[i]])
         {
-          [self encodeWithCoder: aCoder];
+          [aCoder encodeObject: [self valueForKey: keys[i]]
+                        forKey: keys[i]];
         }
     }
 }
@@ -374,7 +400,8 @@ NSString *const kCAAnimationDiscrete = @"CAAnimationDiscrete";
   if (!theCopy)
     return nil;
 
-  static NSString * keys[] = {@"additive", @"cumulative", @"valueFunction"};
+  static NSString * keys[] = {@"keyPath", @"additive", @"cumulative",
+    @"valueFunction"};
   for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
     {
       id value = [self valueForKey: keys[i]];
@@ -611,6 +638,60 @@ static GSQuartzCoreQuaternion linearInterpolationQuaternion(GSQuartzCoreQuaterni
 @synthesize fromValue=_fromValue;
 @synthesize byValue=_byValue;
 @synthesize toValue=_toValue;
+
+- (id) initWithCoder: (NSCoder *)aDecoder
+{
+  self = [super initWithCoder: aDecoder];
+  if (!self)
+    return nil;
+
+  static NSString * keys[] = {@"fromValue", @"byValue", @"toValue"};
+  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
+    {
+      if ([aDecoder containsValueForKey: keys[i]])
+        {
+          [self setValue: [aDecoder decodeObjectForKey: keys[i]]
+                  forKey: keys[i]];
+        }
+    }
+
+  return self;
+}
+
+- (void) encodeWithCoder: (NSCoder *)aCoder
+{
+  [super encodeWithCoder: aCoder];
+
+  static NSString * keys[] = {@"fromValue", @"byValue", @"toValue"};
+  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
+    {
+      if ([[self class] shouldArchiveValueForKey: keys[i]])
+        {
+          [aCoder encodeObject: [self valueForKey: keys[i]]
+                        forKey: keys[i]];
+        }
+    }
+}
+
+- (id) copyWithZone: (NSZone *)zone
+{
+  id theCopy = [super copyWithZone: zone];
+  if (!theCopy)
+    return nil;
+
+  static NSString * keys[] = {@"fromValue", @"byValue", @"toValue"};
+  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
+    {
+      id value = [self valueForKey: keys[i]];
+      if (value)
+        {
+          [theCopy setValue: value
+                     forKey: keys[i]];
+        }
+    }
+
+  return theCopy;
+}
 
 - (void) dealloc
 {
@@ -1011,6 +1092,60 @@ static GSQuartzCoreQuaternion linearInterpolationQuaternion(GSQuartzCoreQuaterni
 @synthesize calculationMode=_calculationMode;
 @synthesize values=_values;
 
+- (id) initWithCoder: (NSCoder *)aDecoder
+{
+  self = [super initWithCoder: aDecoder];
+  if (!self)
+    return nil;
+
+  static NSString * keys[] = {@"calculationMode", @"values"};
+  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
+    {
+      if ([aDecoder containsValueForKey: keys[i]])
+        {
+          [self setValue: [aDecoder decodeObjectForKey: keys[i]]
+                  forKey: keys[i]];
+        }
+    }
+
+  return self;
+}
+
+- (void) encodeWithCoder: (NSCoder *)aCoder
+{
+  [super encodeWithCoder: aCoder];
+
+  static NSString * keys[] = {@"calculationMode", @"values"};
+  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
+    {
+      if ([[self class] shouldArchiveValueForKey: keys[i]])
+        {
+          [aCoder encodeObject: [self valueForKey: keys[i]]
+                        forKey: keys[i]];
+        }
+    }
+}
+
+- (id) copyWithZone: (NSZone *)zone
+{
+  id theCopy = [super copyWithZone: zone];
+  if (!theCopy)
+    return nil;
+
+  static NSString * keys[] = {@"calculationMode", @"values"};
+  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
+    {
+      id value = [self valueForKey: keys[i]];
+      if (value)
+        {
+          [theCopy setValue: value
+                     forKey: keys[i]];
+        }
+    }
+
+  return theCopy;
+}
+
 @end
 
 @implementation CASpringAnimation
@@ -1019,6 +1154,106 @@ static GSQuartzCoreQuaternion linearInterpolationQuaternion(GSQuartzCoreQuaterni
 @synthesize damping = _damping;
 @synthesize initialVelocity = _initialVelocity;
 @synthesize settlingDuration = _settlingDuration;
+
++ (id) defaultValueForKey: (NSString *)key
+{
+  if ([key isEqualToString: @"mass"])
+    {
+      return [NSNumber numberWithFloat: 1.0];
+    }
+  if ([key isEqualToString: @"stiffness"])
+    {
+      return [NSNumber numberWithFloat: 100.0];
+    }
+  if ([key isEqualToString: @"damping"])
+    {
+      return [NSNumber numberWithFloat: 10.0];
+    }
+  if ([key isEqualToString: @"initialVelocity"])
+    {
+      return [NSNumber numberWithFloat: 0.0];
+    }
+
+  return [super defaultValueForKey: key];
+}
+
+- (id) init
+{
+  self = [super init];
+  if (!self)
+    return nil;
+
+  static NSString * keys[] = {@"mass", @"stiffness", @"damping",
+    @"initialVelocity"};
+  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
+    {
+      id defaultValue = [[self class] defaultValueForKey: keys[i]];
+      if (defaultValue)
+        {
+          [self setValue: defaultValue
+                  forKey: keys[i]];
+        }
+    }
+
+  return self;
+}
+
+- (id) initWithCoder: (NSCoder *)aDecoder
+{
+  self = [super initWithCoder: aDecoder];
+  if (!self)
+    return nil;
+
+  static NSString * keys[] = {@"mass", @"stiffness", @"damping",
+    @"initialVelocity"};
+  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
+    {
+      if ([aDecoder containsValueForKey: keys[i]])
+        {
+          [self setValue: [aDecoder decodeObjectForKey: keys[i]]
+                  forKey: keys[i]];
+        }
+    }
+
+  return self;
+}
+
+- (void) encodeWithCoder: (NSCoder *)aCoder
+{
+  [super encodeWithCoder: aCoder];
+
+  static NSString * keys[] = {@"mass", @"stiffness", @"damping",
+    @"initialVelocity"};
+  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
+    {
+      if ([[self class] shouldArchiveValueForKey: keys[i]])
+        {
+          [aCoder encodeObject: [self valueForKey: keys[i]]
+                        forKey: keys[i]];
+        }
+    }
+}
+
+- (id) copyWithZone: (NSZone *)zone
+{
+  id theCopy = [super copyWithZone: zone];
+  if (!theCopy)
+    return nil;
+
+  static NSString * keys[] = {@"mass", @"stiffness", @"damping",
+    @"initialVelocity"};
+  for (int i = 0; i < sizeof(keys)/sizeof(keys[0]); i++)
+    {
+      id value = [self valueForKey: keys[i]];
+      if (value)
+        {
+          [theCopy setValue: value
+                     forKey: keys[i]];
+        }
+    }
+
+  return theCopy;
+}
 @end
 
 @implementation CATransition
