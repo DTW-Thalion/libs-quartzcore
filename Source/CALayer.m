@@ -425,7 +425,10 @@ CALayerApplyAbout(CGAffineTransform t, CGPoint p, CGPoint pivot)
       [self setDelegate: [layer delegate]];
       [self setLayoutManager: [layer layoutManager]];
       [self setSuperlayer: [layer superlayer]]; /* if copied for use in presentation layer, then ignored */
-      [self setSublayers: [layer sublayers]]; /* if copied for use in presentation layer, then ignored */
+      /* The sublayers are not copied: a presentation layer answers the
+         presentation layers of the model's sublayers, so it has no use
+         for a copy, and -setSublayers: would re-parent the model's own
+         sublayers onto it. */
       /* frame not copied: dynamically generated */
       [self setBounds: [layer bounds]];
       [self setAnchorPoint: [layer anchorPoint]];
