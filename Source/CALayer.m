@@ -330,6 +330,7 @@ CALayerApplyAbout(CGAffineTransform t, CGPoint p, CGPoint pivot)
         @"anchorPoint", @"transform", @"sublayerTransform",
         @"opacity", @"delegate", @"contentsRect", @"shouldRasterize",
         @"backgroundColor", @"borderColor", @"contentsScale",
+        @"contentsGravity",
 
         @"beginTime", @"duration", @"speed", @"autoreverses",
         @"repeatCount", @"fillMode",
